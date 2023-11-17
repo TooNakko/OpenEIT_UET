@@ -1,0 +1,277 @@
+"""
+
+# Copyright (c) Mindseye Biomedical LLC. All rights reserved.
+# Distributed under the (new) CC BY-NC-SA 4.0 License. See LICENSE.txt for more info.
+
+	Read in a data file and plot it using an algorithm. 
+
+"""
+from __future__ import division, absolute_import, print_function
+import numpy as np
+import tkinter as tk, threading
+import imageio
+from tkinter import messagebox
+import array as arr
+import matplotlib.pyplot as plt
+from chart_studio import plotly
+import OpenEIT.reconstruction 
+import cv2
+import argparse
+import os
+import serial
+from tkinter import *
+from tkinter import messagebox
+from tkinter import *
+import tkinter as tk
+import tkinter.ttk as ttk
+import serial.tools.list_ports
+import math
+from tkinter import filedialog
+from PIL import Image, ImageTk
+from tkinter import Canvas
+
+#array save x,y
+bx = arr.array('i')
+by = arr.array('i')
+#function click to show the output image
+def clicked():
+    cv2.imshow('image', resized_down)
+    cv2.setMouseCallback('image', click_event)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+#function to show x,y in output graph
+def click_event(event, x, y, flags, params):
+    
+   
+    # checking for left mouse clicks
+    if event == cv2.EVENT_LBUTTONDOWN:
+        shape=cb_shapeobject.get()
+        # displaying the coordinates
+        # on the Shell
+        #print(x, ' ', y)
+        bx.append(x)
+        by.append(y)
+        
+        # displaying the coordinates
+        # on the image window
+        font = cv2.FONT_HERSHEY_SIMPLEX
+
+        #calculate
+        size=len(bx)
+        scale=(cb_diameter.get())
+        if (scale==''or shape==''):
+           
+            messagebox.showerror("Error","Set up Scale to play")
+       
+        # cv2.putText(resized_down,str(len(bx))+'('+ str(x) + ',' +
+        #             str(y)+')', (x,y), font,
+        #             1, (0, 0, 0), 2)
+            #cv2.putText(resized_down,str(len(bx)), (x,y), font,
+            #            1, (0, 0, 0), 2)
+           
+        if (shape=="Circle"):    
+            if (size%2==0):
+                fx=bx[size-1]-bx[size-2]
+                fy=by[size-1]-by[size-2]
+                ox=int(abs(bx[size-1]+bx[size-2])/2)
+                oy=int(abs(by[size-1]+by[size-2])/2)
+                f=int(math.sqrt(fx*fx+fy*fy)/2)
+                print(math.sqrt((bx[size-1]-bx[size-2])*(bx[size-1]-bx[size-2])+(by[size-1]-by[size-2])*(by[size-1]-by[size-2]))/(111267/(int(scale)*int(scale)))  )
+                # /10
+                #messagebox.showinfo("Distance","Distance from"+ str(size-1) +"to"+ str(size)+  "="+ str(f)+" cm")
+                rect=cv2.circle(resized_down,(ox,oy),f,(0,0,0),2)
+                s=f*f*3.14/(273/int(scale))/(273/int(scale))
+                s=int(s)
+                cv2.putText(resized_down,"S="+str(s)+"cm^2",(x,y),font,1,(255,255,255),2)
+        if (shape=="Rectangle"):
+            
+            
+            if (size%2==0):
+                start=(bx[size-2],by[size-2])
+                end=(bx[size-1],by[size-1])
+                f1=(bx[size-1]-bx[size-2])
+                f2=(by[size-2]-by[size-1])
+                #dientich=math.sqrt(f1*f1)*math.sqrt(f2*f2)/(763/int(scale))
+                dientich=math.sqrt(f1*f1)*math.sqrt(f2*f2)/(111267/(int(scale)*int(scale)))
+                rect=cv2.rectangle(resized_down,start,end,(0,0,0),2)
+                cv2.putText(resized_down,str(int(dientich))+"cm^2",(x,y),font,1,(255,255,255),2)
+        cv2.imshow('image', resized_down)
+        
+       
+
+        
+       
+       
+    # checking for right mouse clicks     
+    #if event==cv2.EVENT_RBUTTONDOWN:
+  
+        # displaying the coordinates
+        # on the Shell
+    #    print(x, ' ', y)
+  
+        # displaying the coordinates
+        # on the image window
+    #    font = cv2.FONT_HERSHEY_SIMPLEX
+    #    b = resized_down[y, x, 0]
+    #    g = resized_down[y, x, 1]
+    #    r = resized_down[y, x, 2]
+    #    cv2.putText(resized_down, str(b) + ',' +
+    #                str(g) + ',' + str(r),
+    #                (x,y), font, 1,
+    #                (255, 255, 0), 2)
+    #    cv2.imshow('image', resized_down)
+
+
+
+
+def clickplay():
+    process()
+    img_graph=Label(root, image= imgshow).place(x=590,y=212)
+    
+#function convert from input data 
+def convert_data_in(s):
+    data=s
+    items=[]
+    for item in data.split():
+        item = item.strip()
+        if not item:
+            continue
+        try:
+            items.append(float(item))
+        except ValueError:
+            return None
+    return np.array(items)
+
+
+
+
+#main GUI
+root = Tk()
+root.title(" EIT APP")
+root.geometry("1920x1080")
+img_bg = PhotoImage(file="C:/Users/Admin/test_py/new/bg.png") # make sure to add "/" not "\"
+
+
+
+
+
+imgcal=Image.open("C:/Users/Admin/test_py/new/calculator.png")
+imgplay=Image.open("C:/Users/Admin/test_py/new/run.png")
+imgvideo=Image.open("C:/Users/Admin/test_py/new/video.png")
+# Resize the image in the given (width, height)
+#img_btncal=imgcal.resize((294, 92))
+#img_btnplay=imgplay.resize((294, 92))
+#img_btnvideo=imgvideo.resize((294, 92))
+# Conver the image in TkImage
+btncal=ImageTk.PhotoImage(imgcal)
+btnplay=ImageTk.PhotoImage(imgplay)
+btnvideo=ImageTk.PhotoImage(imgvideo)
+
+label_bg = Label( root, image = img_bg)
+label_bg.place(x = 0,y = 0)
+
+
+
+#COMBOBOX SETTING..............................................
+#combobox selectcom
+cb_serial = ttk.Combobox(root)
+cb_serial['values']=('COM1','COM2','COM3','COM4','COM5','COM6','COM7','COM8','COM9')
+cb_serial.place(x=195,y=340)
+#combobox select baudrate
+cb_baudrate= ttk.Combobox(root)
+cb_baudrate['values'] = ('4800', '9600', '14400','28800','38400','115200','250000')
+cb_baudrate.place(x=195,y=410)
+#combobox select shape object
+cb_shapeobject=ttk.Combobox(root)
+cb_shapeobject['values']=('Rectangle','Circle')
+cb_shapeobject.place(x=195,y=620)
+#combobox select diameter
+cb_diameter = ttk.Combobox(root)
+cb_diameter['values']=('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30')
+cb_diameter.place(x=195,y=525)
+
+#button calculate
+btn_cal=Label(root,image=btncal)
+btn_cal.bind("<Button>", lambda e:clicked())
+btn_cal.place(x=1184,y=87)
+#buton play
+btn_play = Label(root,image=btnplay)
+btn_play.bind("<Button>", lambda e:clickplay())
+btn_play.place(x=590,y=87) 
+path="C:/Users/Admin/test_py/cocvuong.png"
+imgshow=PhotoImage(file=path)
+img_show = cv2.imread('cocvuong.png')
+down_points = (580, 391)
+resized_down = cv2.resize(img_show, down_points, interpolation= cv2.INTER_LINEAR)
+blue,green,red = cv2.split(resized_down)
+resized_down = cv2.merge((red,green,blue))
+im = Image.fromarray(resized_down)
+imgtk = ImageTk.PhotoImage(image=im)
+
+btn_showvideo=Label(root,image=btnvideo)
+btn_showvideo.place(x=887,y=87)
+
+
+
+
+#main function play 
+def process():
+    n_el = 16
+    #read data from Serial of arduino
+   
+    #read data from Serial of arduino
+    filed = filedialog.askopenfilename(initialdir='/', title="select file data",
+                                      filetypes=(("Txt Files",".txt"), ("All Files","*.*")))
+    file = filedialog.askopenfilename(initialdir='/', title="select file reference",
+                                      filetypes=(("Txt Files",".txt"), ("All Files","*.*")))
+    #inserting data to text editor
+    contentd=open(file,'r')
+    datas=contentd.readlines()
+    content =open(file,'r')
+    refs= content.readlines()
+    #file_data=open("data.txt","r")
+    #file_ref =open("ref.txt","r")
+
+    #datas=file_data.readlines()
+    #refs=file_ref.readlines()
+
+
+    #loop for print and  reconstruct data
+
+    for i in range(0,1):
+        f1= convert_data_in(refs[0])
+        g = OpenEIT.reconstruction.JacReconstruction(n_el=n_el)
+        data_baseline = convert_data_in(datas[i])
+        #data_baseline = convert_data_in([i])
+        #print ('size',len(data_baseline),len(f1))
+        g.update_reference(data_baseline) 
+        baseline = g.eit_reconstruction(convert_data_in(datas[i]))
+        #baseline = g.eit_reconstruction(convert_data_in(a[i]))
+        difference_image = g.eit_reconstruction(f1)
+        #print (len(difference_image))
+        mesh_obj = g.mesh_obj
+        el_pos = g.el_pos
+        ex_mat = g.ex_mat
+        pts     = g.mesh_obj['node']
+        tri = g.mesh_obj['element']
+        x   = pts[:, 0]
+        y   = pts[:, 1]
+        # JAC OR BP RECONSTRUCTION SHOW # 
+        fig, ax = plt.subplots(figsize=(11.76, 8.1))
+        ax.plot(x[el_pos], y[el_pos], 'ro')
+        ax.axis('equal')
+        ax.set_title("graph")
+        im = ax.tripcolor(x,y, tri, difference_image,
+                            shading='flat', cmap=plt.cm.gnuplot)
+
+
+        for f, e in enumerate(el_pos):
+                ax.text(x[e], y[e], str(f+1), size=12)
+
+
+        fig.colorbar(im)
+        fig.savefig(fname=str(i)+".png")
+    
+    
+root.mainloop()
