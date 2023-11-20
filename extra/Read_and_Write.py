@@ -7,12 +7,9 @@ def WriteIntoSerialCom(port, content):
     serial_com = serial.Serial(port)
     serial_com.write(content.encode('utf-8'))
 
-    
-
 def ReadFromSerialCom(port, timeout_value):
     serial_com = serial.Serial(port,timeout=timeout_value)
     message = serial_com.readline().decode()
-
     return message
 
 def NewFolder(folder_name):
@@ -20,7 +17,6 @@ def NewFolder(folder_name):
         os.makedirs(folder_name)
 
 def GetPathOfText(folder_name,text_file_name):
-    
     for index in range (0,100):
         text_file_path = os.path.join(folder_name, text_file_name)
         if os.path.exists(text_file_path) == False:

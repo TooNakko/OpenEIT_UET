@@ -5,9 +5,6 @@ import time
 import random
 import os
 
-
-
-
 i = 0
 while i<1000:
     message = round(float(random.random() * 10),5)
