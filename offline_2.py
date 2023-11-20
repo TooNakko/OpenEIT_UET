@@ -30,14 +30,17 @@ def convert_data_in(s):
 a = []
 arduino = serial.Serial('COM5', 250000,timeout=5)
 while True:
-    #while arduino.inWaiting()==0:
-    #    print("waiting")
-    #    pass
-    #data = arduino.readline().decode('ascii')
+    while arduino.inWaiting()==0:
+        print("waiting")
+        pass
+    data = arduino.readline().decode('ascii')
+    print("{0} | data =\n{1} ".format(type(data), data))
     #data=str(data,'utf-8')
-    #data=data.strip('\r\n')
+    data=data.strip('\r\n')
+    data_arr = convert_data_in(data)
+    print(data_arr)
     #for i in range(0,len(data)):
-    #a.append(data)
+    #    a.append(data)
     
     n_el = 16
 
@@ -52,11 +55,14 @@ while True:
         break
     lines = text_file.readlines()
 # This is the baseline image.  
-
-    f0          = convert_data_in(lines[0]).tolist()  # input REF
-    print(f0)
-    print(len(f0))
+    #f0          = convert_data_in(lines[0]).tolist()  # input REF
     #f0          = a[0]
+    f0 = data_arr
+    print("f0:\n")
+    print(f0)
+    print("length of f0: ")
+    print(len(f0))
+
 # this is the new difference image. 
     f1          = convert_data_in(lines[1]).tolist()   # function bo dau phay
     print(type(f1))
@@ -79,7 +85,7 @@ while True:
 
 # set the baseline. 
     baseline = g.eit_reconstruction(f0)
-    print("\n============================\n")
+    print("\n===========baseline==============\n")
     print (baseline)
     print('\n')
     print(len(baseline))
@@ -87,7 +93,7 @@ while True:
 
 # do the reconstruction. 
     difference_image = g.eit_reconstruction(f1)
-    print("\n============================\n")
+    print("\n==========difference image=========\n")
     print(difference_image)
     print('\n')
     print (len(difference_image))

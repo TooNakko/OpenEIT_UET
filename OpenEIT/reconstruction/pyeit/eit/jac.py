@@ -58,6 +58,8 @@ class JAC(EitBase):
             dv = self.normalize(v1, v0)
         else:
             print("v1 is {0} and v0 is {1}\nperform v1 - v0.".format(type(v1), type(v0)))
+            print("v1 = {0}\n\n v0 = {1}.".format(v1, v0))
+
             dv = (v1 - v0)
             print("{0} dv = \n".format(type(dv)))
             print(dv)
