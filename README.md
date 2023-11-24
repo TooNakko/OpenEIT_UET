@@ -141,4 +141,4 @@ In `offline.py` The size of h_matrix varies depending on the number of electrode
 
 The length of data in each line in `data.txt` should match the column of the `h_matrix` (the second element).
 
-In `offline_2.py`, instead of adding to 2 variable f0 and f1 both data in .txt file, now one variable (which is f0) will take data from the COM port. The data is the ones in that .txt files, in 1 line only.
+In `offline_2.py`, instead of adding to 2 variable f0 and f1 both data in .txt file, now one variable (which is f0) will take data from the COM port. The another data is the ones in that .txt files, in 1 line only.

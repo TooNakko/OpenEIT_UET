@@ -17,32 +17,32 @@ import OpenEIT.reconstruction
 def convert_data_in(s):
     data=s
     items=[]
-    for item in data.split(','):
+    for item in data.split(' '):
         item = item.strip()
         if not item:
             continue
         try:
             items.append(float(item))
         except ValueError:
-            print("\nValue error: {0}, none returned!".format(items))
+            print("\nValue error: {0} {1}, none returned!".format(items, type(items)))
             return None
     return np.array(items)
-a = []
-arduino = serial.Serial('COM5', 250000,timeout=5)
+a = ''
+n_el = 16
+arduino = serial.Serial('COM8', 250000,timeout=5)
 while True:
     while arduino.inWaiting()==0:
         print("waiting")
         pass
-    data = arduino.readline().decode('ascii')
-    print("{0} | data =\n{1} ".format(type(data), data))
+    for i in range (0, n_el):
+        data = arduino.readline().decode('ascii')
+        print("{0} is read into the list".format(data))
+        data=data.strip('\r\n')
+        a += data
+        a += ' '
+        print("string: {0}".format(a))
+    print("{0} |final a =\n{1} ".format(type(a), a))
     #data=str(data,'utf-8')
-    data=data.strip('\r\n')
-    data_arr = convert_data_in(data)
-    print(data_arr)
-    #for i in range(0,len(data)):
-    #    a.append(data)
-    
-    n_el = 16
 
     if n_el == 8:
         text_file = open("offline_data/data_8.txt", "r")
@@ -53,18 +53,26 @@ while True:
     else:
         print("Currently only supports 8,16 or 32 electrodes system.")
         break
+    
     lines = text_file.readlines()
 # This is the baseline image.  
     #f0          = convert_data_in(lines[0]).tolist()  # input REF
-    #f0          = a[0]
-    f0 = data_arr
+    f0          = convert_data_in(a).tolist()
+
+    print("\n=============")
+    print(type(a))
+    print(a)
+    print("\n=============")
+    print(lines[1])
+    f1          = convert_data_in(lines[1]).tolist()
+    
     print("f0:\n")
     print(f0)
     print("length of f0: ")
     print(len(f0))
 
 # this is the new difference image. 
-    f1          = convert_data_in(lines[1]).tolist()   # function bo dau phay
+      # function bo dau phay
     print(type(f1))
     print(f1)
 
