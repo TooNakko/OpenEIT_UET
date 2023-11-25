@@ -12,7 +12,8 @@ import serial
 import matplotlib.pyplot as plt
 from chart_studio import plotly
 import OpenEIT.reconstruction 
-
+import time
+import random
 
 def convert_data_in(s):
     data=s
@@ -27,22 +28,34 @@ def convert_data_in(s):
             print("\nValue error: {0} {1}, none returned!".format(items, type(items)))
             return None
     return np.array(items)
-a = ''
+reference_image_array = ''
+difference_image_array = ''
 n_el = 16
-arduino = serial.Serial('COM8', 250000,timeout=5)
+arduino = serial.Serial('COM9', 250000,timeout=5)
 while True:
     while arduino.inWaiting()==0:
         print("waiting")
         pass
+
+    # Read reference image f0:
     for i in range (0, n_el):
         data = arduino.readline().decode('ascii')
-        print("{0} is read into the list".format(data))
         data=data.strip('\r\n')
-        a += data
-        a += ' '
-        print("string: {0}".format(a))
-    print("{0} |final a =\n{1} ".format(type(a), a))
+        reference_image_array += data
+        reference_image_array += ' '
+        print("string: {0}".format(data))
     #data=str(data,'utf-8')
+    print('\n')
+    # Read difference image f1:
+    for i in range (0, n_el):
+       
+        data = arduino.readline().decode('ascii')
+        data=data.strip('\r\n')
+        difference_image_array += data
+        difference_image_array += ' '
+        print("string: {0}".format(data))
+
+
 
     if n_el == 8:
         text_file = open("offline_data/data_8.txt", "r")
@@ -57,23 +70,15 @@ while True:
     lines = text_file.readlines()
 # This is the baseline image.  
     #f0          = convert_data_in(lines[0]).tolist()  # input REF
-    f0          = convert_data_in(a).tolist()
+    f0          = convert_data_in(reference_image_array).tolist()
 
-    print("\n=============")
-    print(type(a))
-    print(a)
-    print("\n=============")
-    print(lines[1])
-    f1          = convert_data_in(lines[1]).tolist()
-    
+    #f1          = convert_data_in(lines[1]).tolist()
+    f1          = convert_data_in(difference_image_array).tolist() 
     print("f0:\n")
     print(f0)
-    print("length of f0: ")
-    print(len(f0))
+    print('\n')
 
-# this is the new difference image. 
-      # function bo dau phay
-    print(type(f1))
+    print("f1:\n")
     print(f1)
 
     """ Select one of the three methods of EIT tomographic reconstruction, Gauss-Newton(Jacobian), GREIT, or Back Projection(BP)"""
