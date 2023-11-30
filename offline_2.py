@@ -34,13 +34,14 @@ time_start_0 = float(time.time() % (24 * 3600))
 reference_image_array  = ''
 difference_image_array = ''
 n_el = 16
-arduino = serial.Serial('COM8', 250000,timeout=5)
+NewFrameSearchFlag = 1
+#arduino = serial.Serial('COM8', 115200,timeout=5)
 
 while True:
-    while arduino.inWaiting()==0:
-        print("waiting")
-        pass
-    time_start_1 = float(time.time() % (24 * 3600))
+    #while arduino.inWaiting()==0:
+    #    print("waiting")
+    #    pass
+    #time_start_1 = float(time.time() % (24 * 3600))
     
     ## Read reference image f0:
     #for i in range (0, n_el):
@@ -50,17 +51,33 @@ while True:
     #    reference_image_array += ' '
     #    print("string: {0}".format(data))
     ##data=str(data,'utf-8')
-    print('\n')
-    # Read difference image f1:
-    for i in range (0, n_el): 
-        data = arduino.readline().decode('ascii')
-        data=data.strip('\r\n')
-        difference_image_array += data
-        difference_image_array += ' '
-        print("string: {0}".format(data))
-
-# This is the baseline image.  
-    text_file = open("ref_data.txt", "r")
+    #print('\n===')
+    ## Read difference image f1:
+    #for i in range (0, n_el): 
+    #    data = arduino.readline().decode('ascii')
+    #    #skip until the empty line is found to catch the whole frame
+    #    while(NewFrameSearchFlag == 1):
+    #        if len(data) > 4:
+    #            print("Seeking for new frame")
+    #            data = arduino.readline().decode('ascii')
+#
+    #            continue
+    #        else:
+    #            print("New frame found!")
+    #            data = arduino.readline().decode('ascii')
+    #            NewFrameSearchFlag = 0
+    #            break
+    #            time.sleep(0.5)
+    #    # Check if receiving enough data to avoid miss-matching
+    #    #if len(data) < 68:
+    #    #    data = arduino.readline().decode('ascii')
+    #    data=data.strip('\r\n')
+    #    difference_image_array += data
+    #    difference_image_array += ' '
+    #    print("string: {0}".format(data))
+#
+# Th#is is the baseline image.  
+    text_file = open("UET_data/ref_data.txt", "r")
     lines = text_file.readlines()
     f0 = convert_data_in(lines[0]).tolist()
 
@@ -68,8 +85,12 @@ while True:
     #f0          = convert_data_in(reference_image_array).tolist()
 
     #f1          = convert_data_in(lines[1]).tolist()
-    f1          = convert_data_in(difference_image_array).tolist() 
-    print("f0:\n")
+    text_file_2 = open("UET_data/diff_left_data.txt", "r")
+    lines_2 = text_file_2.readlines()
+    #f1          = convert_data_in(difference_image_array).tolist() 
+    f1          = convert_data_in(lines_2[0]).tolist() 
+    
+    print("\nf0:\n")
     print(f0)
     print('\n')
 
@@ -78,7 +99,7 @@ while True:
 
     """ Select one of the three methods of EIT tomographic reconstruction, Gauss-Newton(Jacobian), GREIT, or Back Projection(BP)"""
 # This is the Gauss Newton Method for tomographic reconstruction. 
-    print("jac rescontructing")
+    print("\njac rescontructing\n")
     g = OpenEIT.reconstruction.JacReconstruction(n_el=n_el)
     print("finished reconstructing")
 # Note: Greit method uses a different mesh, so the plot code will be different.
