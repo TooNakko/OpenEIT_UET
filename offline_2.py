@@ -14,6 +14,7 @@ from chart_studio import plotly
 import OpenEIT.reconstruction 
 import time
 import random
+from datetime import datetime
 
 def convert_data_in(s):
     data=s
@@ -28,49 +29,43 @@ def convert_data_in(s):
             print("\nValue error: {0} {1}, none returned!".format(items, type(items)))
             return None
     return np.array(items)
-reference_image_array = ''
+time_start_0 = float(time.time() % (24 * 3600))
+
+reference_image_array  = ''
 difference_image_array = ''
 n_el = 16
-arduino = serial.Serial('COM9', 250000,timeout=5)
+arduino = serial.Serial('COM8', 250000,timeout=5)
+
 while True:
     while arduino.inWaiting()==0:
         print("waiting")
         pass
-
-    # Read reference image f0:
-    for i in range (0, n_el):
-        data = arduino.readline().decode('ascii')
-        data=data.strip('\r\n')
-        reference_image_array += data
-        reference_image_array += ' '
-        print("string: {0}".format(data))
-    #data=str(data,'utf-8')
+    time_start_1 = float(time.time() % (24 * 3600))
+    
+    ## Read reference image f0:
+    #for i in range (0, n_el):
+    #    data = arduino.readline().decode('ascii')
+    #    data=data.strip('\r\n')
+    #    reference_image_array += data
+    #    reference_image_array += ' '
+    #    print("string: {0}".format(data))
+    ##data=str(data,'utf-8')
     print('\n')
     # Read difference image f1:
-    for i in range (0, n_el):
-       
+    for i in range (0, n_el): 
         data = arduino.readline().decode('ascii')
         data=data.strip('\r\n')
         difference_image_array += data
         difference_image_array += ' '
         print("string: {0}".format(data))
 
-
-
-    if n_el == 8:
-        text_file = open("offline_data/data_8.txt", "r")
-    elif n_el == 16:
-        text_file = open("offline_data/data_16.txt", "r")
-    elif n_el == 32:
-        text_file = open("offline_data/data_32.txt", "r")
-    else:
-        print("Currently only supports 8,16 or 32 electrodes system.")
-        break
-    
-    lines = text_file.readlines()
 # This is the baseline image.  
+    text_file = open("ref_data.txt", "r")
+    lines = text_file.readlines()
+    f0 = convert_data_in(lines[0]).tolist()
+
     #f0          = convert_data_in(lines[0]).tolist()  # input REF
-    f0          = convert_data_in(reference_image_array).tolist()
+    #f0          = convert_data_in(reference_image_array).tolist()
 
     #f1          = convert_data_in(lines[1]).tolist()
     f1          = convert_data_in(difference_image_array).tolist() 
@@ -112,7 +107,7 @@ while True:
     print (len(difference_image))
     print("\n============================\n")
 
-# #print(g.__dict__)
+    print(g)
 
 
     mesh_obj = g.mesh_obj
@@ -136,7 +131,11 @@ while True:
     ax.axis('equal')
     fig.colorbar(im)
     break
+time_end_0 = float(time.time() % (24 * 3600))
+run_time_total = time_end_0 - time_start_0
+print("\n\nTOTAL RUN TIME: {0}".format(run_time_total))
 plt.show()
+
 
 """ Uncomment the below code if you wish to plot the GREIT output. Also, please look at the pyEIT documentation on how to optimize and tune the algorithms. A little tuning goes a long way! """
 # GREIT RECONSTRUCION IMAGE SHOW # 

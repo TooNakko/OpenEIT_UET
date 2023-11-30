@@ -75,7 +75,11 @@ def create(n_el=16, fd=None, fh=None, p_fix=None, bbox=None, h0=0.03):
     mesh = {'element': t,
             'node': p,
             'perm': perm}
-    #print(el_pos)
+            
+    print("====================\nel_pos = \n")
+    print(el_pos)
+    print("\n====================\n")
+
     return mesh, el_pos
 
 
