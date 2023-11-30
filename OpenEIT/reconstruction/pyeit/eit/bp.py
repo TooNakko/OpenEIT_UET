@@ -23,7 +23,7 @@ class BP(EitBase):
             weights = self.simple_weight(self.B.shape[0])
             self.H = weights * self.B
 
-    def solve(self, v1, v0=None, normalize=True):
+    def solve(self, v1, v0, normalize=True):
         """
         back projection : mapping boundary data on element
         (note) normalize method affect the shape (resolution) of bp
@@ -44,8 +44,14 @@ class BP(EitBase):
         # without specifying any reference frame
         if v0 is None:
             v0 = self.v0
+
         # choose normalize method, we use sign by default
         if normalize:
+            print("\n====normlize in solve=======\n")
+            print("length of f0:\n={0}".format(len(self.v0)))
+            print("\n{0}".format(self.v0))
+            print("\nlength of f1:\n{0}".format(len(v1)))
+            print("\n{0}".format(v1))
             vn = -(v1 - v0) / np.sign(self.v0)
         else:
             vn = (v1 - v0)

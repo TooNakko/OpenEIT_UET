@@ -14,7 +14,7 @@ from .shape import unit_circle, unit_ball, area_uniform
 from .shape import fix_points_fd, fix_points_ball
     
 
-def create(n_el=16, fd=None, fh=None, p_fix=None, bbox=None, h0=0.03):
+def create(n_el=16, fd=None, fh=None, p_fix=None, bbox=None, h0=0.5): #
     """
     wrapper for pyEIT interface
 

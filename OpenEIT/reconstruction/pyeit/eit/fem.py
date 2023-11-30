@@ -120,9 +120,11 @@ class Forward(object):
             
             # append
             v.append(v_diff)
+
             jac.append(jac_diff)
             b_matrix.append(b)
-
+        print("\n=======fem.py solve_eit ========\n")
+        print(v)
         # update output, now you can call p.jac, p.v, p.b_matrix
         pde_result = namedtuple("pde_result", ['jac', 'v', 'b_matrix'])
         p = pde_result(jac=np.vstack(jac),
@@ -241,9 +243,9 @@ def subtract_row(v, pairs):
     """
     i = pairs[:, 0]
     j = pairs[:, 1]
+    
     # row-wise/element-wise operation on matrix/vector v
     v_diff = v[i] - v[j]
-
     return v_diff
 
 
@@ -289,7 +291,6 @@ def voltage_meter(ex_line, n_el=16, step=1, parser=None):
         if not(m == drv_a or m == drv_b or n == drv_a or n == drv_b ):
             # the order of m, n matters
             v.append([n, m])
-
     diff_pairs = np.array(v)
     return diff_pairs
 

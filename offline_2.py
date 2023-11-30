@@ -100,12 +100,12 @@ while True:
     """ Select one of the three methods of EIT tomographic reconstruction, Gauss-Newton(Jacobian), GREIT, or Back Projection(BP)"""
 # This is the Gauss Newton Method for tomographic reconstruction. 
     print("\njac rescontructing\n")
-    g = OpenEIT.reconstruction.JacReconstruction(n_el=n_el)
+    #g = OpenEIT.reconstruction.JacReconstruction(n_el=n_el)
     print("finished reconstructing")
 # Note: Greit method uses a different mesh, so the plot code will be different.
 # g = OpenEIT.reconstruction.GreitReconstruction(n_el=n_el)
 # 
-#g = OpenEIT.reconstruction.BpReconstruction(n_el=n_el)
+    g = OpenEIT.reconstruction.BpReconstruction(n_el=n_el)
 
     data_baseline = f0
     print ('f0',len(f0),len(f1))

@@ -64,6 +64,9 @@ class BpReconstruction:
             # data contains fl.v and f0.v 
             f1 = np.array(data)
             # if the jacobian is not normalized, data may not to be normalized too.
+            print("\n==eit.rescontruction======\n")
+            print("f0 = {0}\nf1 = {1}\n".format(self.f0, f1))
+            print("\n==============\n")
             ds_bp = self.eit.solve(f1, self.f0, normalize=True)
             self.img = np.real(ds_bp)
 
