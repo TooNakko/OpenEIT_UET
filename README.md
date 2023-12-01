@@ -129,7 +129,9 @@ Are you using this effort? Is it helpful to you? Would you like to see it mainta
 
 <a class="dbox-donation-button" href="https://donorbox.org/donate-to-make-biomedical-imaging-more-accessible?hide_donation_meter=true" style="background:#2d81c5 url(https://d1iczxrky3cnb2.cloudfront.net/red_logo.png) no-repeat 56px center; color: #fff;text-decoration: none;font-family: Verdana,sans-serif;display: inline-block;font-size: 16px;padding: 17px 64px 17px 94px; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; box-shadow: 0 2px 0 0 #1f5a89; text-shadow: 0 1px rgba(0, 0, 0, 0.3);" ><img src="images/button-medium-blue.png"></a>
 
-# UET edited:
+## UET edited:
+
+# 24/11/2023
 
 In `offline.py` The size of h_matrix varies depending on the number of electrodes (n_el).
 
@@ -142,3 +144,9 @@ In `offline.py` The size of h_matrix varies depending on the number of electrode
 The length of data in each line in `data.txt` should match the column of the `h_matrix` (the second element).
 
 In `offline_2.py`, instead of adding to 2 variable f0 and f1 both data in .txt file, now one variable (which is f0) will take data from the COM port. The another data is the ones in those .txt files.
+
+# 1/12/2023:
+
+- Seems apposition mode of `el_dist` only 12 electrodes are processed by voltage meter per time so the value is miss-matched. We change all apposition mode in Back Projection algorithm and GREIT algorithm to adjacent mode.
+- `offline2.py` is modified so now user can input the method (JAC, NP or GREIT)
+- The density of mesh (variable h0 in `create(n_el=16, fd=None, fh=None, p_fix=None, bbox=None, h0=0.125)`) is modified in `wrapper.py` to speed up the program.

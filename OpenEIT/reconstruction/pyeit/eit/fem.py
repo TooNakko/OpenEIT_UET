@@ -89,7 +89,7 @@ class Forward(object):
         # calculate f and Jacobian iteratively over all stimulation lines
         jac, v, b_matrix = [], [], []
         n_lines = ex_mat.shape[0]
-
+        
         for i in range(n_lines):
             # FEM solver of one stimulation pattern, a row in ex_mat
             ex_line = ex_mat[i]
@@ -105,8 +105,10 @@ class Forward(object):
             
             #print (ex_mat)
             #print (ex_line)
-            #print (diff_op)
-
+            #print("\n====f_el = \n")
+            #print(f_el)
+            #print("\n===== diff_op = \n")
+            #print(diff_op)
             v_diff = subtract_row(f_el, diff_op)
             jac_diff = subtract_row(jac_i, diff_op)
            
@@ -124,6 +126,7 @@ class Forward(object):
             jac.append(jac_diff)
             b_matrix.append(b)
         print("\n=======fem.py solve_eit ========\n")
+        print("len of v: {0}\nv = \n".format(len(v)))
         print(v)
         # update output, now you can call p.jac, p.v, p.b_matrix
         pde_result = namedtuple("pde_result", ['jac', 'v', 'b_matrix'])

@@ -29,8 +29,10 @@ def convert_data_in(s):
             print("\nValue error: {0} {1}, none returned!".format(items, type(items)))
             return None
     return np.array(items)
-time_start_0 = float(time.time() % (24 * 3600))
+print("Input the method (jac | bp | gr)\n")
+method = str(input())
 
+time_start_0 = float(time.time() % (24 * 3600))
 reference_image_array  = ''
 difference_image_array = ''
 n_el = 16
@@ -76,7 +78,7 @@ while True:
     #    difference_image_array += ' '
     #    print("string: {0}".format(data))
 #
-# Th#is is the baseline image.  
+# This is the baseline image.  
     text_file = open("UET_data/ref_data.txt", "r")
     lines = text_file.readlines()
     f0 = convert_data_in(lines[0]).tolist()
@@ -99,14 +101,17 @@ while True:
 
     """ Select one of the three methods of EIT tomographic reconstruction, Gauss-Newton(Jacobian), GREIT, or Back Projection(BP)"""
 # This is the Gauss Newton Method for tomographic reconstruction. 
-    print("\njac rescontructing\n")
+    #print("\njac rescontructing\n")
     #g = OpenEIT.reconstruction.JacReconstruction(n_el=n_el)
-    print("finished reconstructing")
+    #print("finished reconstructing")
 # Note: Greit method uses a different mesh, so the plot code will be different.
-# g = OpenEIT.reconstruction.GreitReconstruction(n_el=n_el)
-# 
-    g = OpenEIT.reconstruction.BpReconstruction(n_el=n_el)
-
+    if(method == 'jac'):
+        g = OpenEIT.reconstruction.JacReconstruction(n_el=n_el)
+    elif(method == 'bp'): 
+        g = OpenEIT.reconstruction.BpReconstruction(n_el=n_el)
+    elif(method == 'gr'):
+        g = OpenEIT.reconstruction.GreitReconstruction(n_el=n_el)
+        
     data_baseline = f0
     print ('f0',len(f0),len(f1))
 
@@ -142,42 +147,41 @@ while True:
     """ Uncomment the below code if you wish to plot the Jacobian(Gauss-Newton) or Back Projection output.
     Also, please look at the pyEIT documentation on how to optimize and tune the algorithms. 
     A little tuning goes a long way! """
+    if(method == 'jac' or method == 'bp'):
+        fig, ax = plt.subplots(figsize=(6, 4))
+        im = ax.tripcolor(x,y, tri, difference_image,
+                      shading='flat', cmap=plt.cm.gnuplot)
+        ax.plot(x[el_pos], y[el_pos], 'ro')
+        for i, e in enumerate(el_pos):
+            ax.text(x[e], y[e], str(i+1), size=12)
+        ax.axis('equal')
+        fig.colorbar(im)
 
-    fig, ax = plt.subplots(figsize=(6, 4))
-    im = ax.tripcolor(x,y, tri, difference_image,
-                  shading='flat', cmap=plt.cm.gnuplot)
-    ax.plot(x[el_pos], y[el_pos], 'ro')
-    for i, e in enumerate(el_pos):
-        ax.text(x[e], y[e], str(i+1), size=12)
-    ax.axis('equal')
-    fig.colorbar(im)
+
+    """ Uncomment the below code if you wish to plot the GREIT output. Also, please look at the pyEIT documentation on how to optimize and tune the algorithms. A little tuning goes a long way! """
+    if(method == 'gr'):
+     # GREIT RECONSTRUCION IMAGE SHOW # 
+        new     = difference_image[np.logical_not(np.isnan(difference_image))]
+        flat    = new.flatten()   
+        av      = np.median(flat)
+        total   = []
+        for i in range(n_el):
+            for j in range(n_el):
+                if difference_image[i,j] < -5000: 
+                    difference_image[i,j] = av
+        print ('image shape: ',difference_image.shape)
+        fig, ax = plt.subplots(figsize=(6, 4))
+        #rotated = np.rot90(image, 1)
+        im = ax.imshow(difference_image, interpolation='none', cmap=plt.cm.rainbow)
+        fig.colorbar(im)
+        ax.axis('equal')
+        ax.set_title(r'$\Delta$ Conductivity Map of Lungs')
+        fig.set_size_inches(6, 4)
+        # fig.savefig('../figs/demo_greit.png', dpi=96)
+ 
     break
+
 time_end_0 = float(time.time() % (24 * 3600))
 run_time_total = time_end_0 - time_start_0
-print("\n\nTOTAL RUN TIME: {0}".format(run_time_total))
+print("\n\nTOTAL RUN TIME FOR {0}: {1}".format(method, run_time_total))
 plt.show()
-
-
-""" Uncomment the below code if you wish to plot the GREIT output. Also, please look at the pyEIT documentation on how to optimize and tune the algorithms. A little tuning goes a long way! """
-# GREIT RECONSTRUCION IMAGE SHOW # 
-#  new     = difference_image[np.logical_not(np.isnan(difference_image))]
-# flat    = new.flatten()   
-# av      = np.median(flat)
-# total   = []
-# for i in range(32):
-#     for j in range(32):
-#         if difference_image[i,j] < -5000: 
-#             difference_image[i,j] = av
-
-# print ('image shape: ',difference_image.shape)
-# fig, ax = plt.subplots(figsize=(6, 4))
-# #rotated = np.rot90(image, 1)
-# im = ax.imshow(difference_image, interpolation='none', cmap=plt.cm.rainbow)
-# fig.colorbar(im)
-# ax.axis('equal')
-# ax.set_title(r'$\Delta$ Conductivity Map of Lungs')
-# fig.set_size_inches(6, 4)
-# # fig.savefig('../figs/demo_greit.png', dpi=96)
-# plt.show()
-
-

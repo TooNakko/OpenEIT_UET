@@ -35,7 +35,8 @@ class GreitReconstruction:
         self.img = []
         self.baseline_flag = 1
         self.n_el = n_el # number of electrodes. 
-        self.el_dist = int(self.n_el/2) # random initialize number 
+        #self.el_dist = int(self.n_el/2) # random initialize number 
+        self.el_dist = 1
         self.step = 1
         # we create this according to an opposition protocol to maximize contrast. 
         self.ex_mat = eit_scan_lines(ne = self.n_el, dist = self.el_dist)
