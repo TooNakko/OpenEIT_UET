@@ -16,6 +16,17 @@ import time
 import random
 from datetime import datetime
 
+def readfromArduino():
+    while(True):
+        try:
+            data = arduino.readline().decode('ascii')
+            break
+        except UnicodeDecodeError:
+            print("UnicodeDecodeError found!")
+            time.sleep(3)
+            continue
+    return data
+
 def convert_data_in(s):
     data=s
     items=[]
@@ -29,21 +40,22 @@ def convert_data_in(s):
             print("\nValue error: {0} {1}, none returned!".format(items, type(items)))
             return None
     return np.array(items)
+
+
 print("Input the method (jac | bp | gr)\n")
 method = str(input())
 
-time_start_0 = float(time.time() % (24 * 3600))
 reference_image_array  = ''
 difference_image_array = ''
 n_el = 16
 NewFrameSearchFlag = 1
-#arduino = serial.Serial('COM8', 115200,timeout=5)
+arduino = serial.Serial('COM9', 250000 ,timeout=5)
 
 while True:
-    #while arduino.inWaiting()==0:
-    #    print("waiting")
-    #    pass
-    #time_start_1 = float(time.time() % (24 * 3600))
+    while arduino.inWaiting()==0:
+        print("waiting")
+        pass
+    time_start_0 = float(time.time() % (24 * 3600))
     
     ## Read reference image f0:
     #for i in range (0, n_el):
@@ -52,52 +64,53 @@ while True:
     #    reference_image_array += data
     #    reference_image_array += ' '
     #    print("string: {0}".format(data))
-    ##data=str(data,'utf-8')
+    #data=str(data,'utf-8')
     #print('\n===')
-    ## Read difference image f1:
-    #for i in range (0, n_el): 
-    #    data = arduino.readline().decode('ascii')
-    #    #skip until the empty line is found to catch the whole frame
-    #    while(NewFrameSearchFlag == 1):
-    #        if len(data) > 4:
-    #            print("Seeking for new frame")
-    #            data = arduino.readline().decode('ascii')
-#
-    #            continue
-    #        else:
-    #            print("New frame found!")
-    #            data = arduino.readline().decode('ascii')
-    #            NewFrameSearchFlag = 0
-    #            break
-    #            time.sleep(0.5)
-    #    # Check if receiving enough data to avoid miss-matching
-    #    #if len(data) < 68:
-    #    #    data = arduino.readline().decode('ascii')
-    #    data=data.strip('\r\n')
-    #    difference_image_array += data
-    #    difference_image_array += ' '
-    #    print("string: {0}".format(data))
-#
+
+    # Read difference image f1:
+    for i in range (0, n_el): 
+        data = readfromArduino()
+        #skip until the empty line is found to catch the whole frame
+        while(NewFrameSearchFlag == 1):
+            if len(data) > 4:
+                print("Seeking for new frame")
+                data = readfromArduino()
+
+                continue
+            else:
+                print("New frame found!")
+                data = readfromArduino()
+
+                NewFrameSearchFlag = 0
+                break
+        # Check if receiving enough data to avoid miss-matching
+        if len(data) < 68:
+            data = readfromArduino()
+        data=data.strip('\r\n')
+        difference_image_array += data
+        difference_image_array += ' '
+        print("string: {0}".format(data))
+
 # This is the baseline image.  
     text_file = open("UET_data/ref_data.txt", "r")
     lines = text_file.readlines()
     f0 = convert_data_in(lines[0]).tolist()
-
     #f0          = convert_data_in(lines[0]).tolist()  # input REF
     #f0          = convert_data_in(reference_image_array).tolist()
-
     #f1          = convert_data_in(lines[1]).tolist()
-    text_file_2 = open("UET_data/diff_left_data.txt", "r")
-    lines_2 = text_file_2.readlines()
-    #f1          = convert_data_in(difference_image_array).tolist() 
-    f1          = convert_data_in(lines_2[0]).tolist() 
-    
-    print("\nf0:\n")
-    print(f0)
-    print('\n')
 
-    print("f1:\n")
-    print(f1)
+
+    #text_file_2 = open("UET_data/diff_left_data.txt", "r")
+    #lines_2 = text_file_2.readlines()
+    f1          = convert_data_in(difference_image_array).tolist() 
+    #f1          = convert_data_in(lines_2[0]).tolist() 
+    
+    #print("\nf0:\n")
+    #print(f0)
+    #print('\n')
+
+    #print("f1:\n")
+    #print(f1)
 
     """ Select one of the three methods of EIT tomographic reconstruction, Gauss-Newton(Jacobian), GREIT, or Back Projection(BP)"""
 # This is the Gauss Newton Method for tomographic reconstruction. 
@@ -119,21 +132,21 @@ while True:
 
 # set the baseline. 
     baseline = g.eit_reconstruction(f0)
-    print("\n===========baseline==============\n")
-    print (baseline)
-    print('\n')
-    print(len(baseline))
-    print("\n============================\n")
+    #print("\n===========baseline==============\n")
+    #print (baseline)
+    #print('\n')
+    #print(len(baseline))
+    #print("\n============================\n")
 
 # do the reconstruction. 
     difference_image = g.eit_reconstruction(f1)
-    print("\n==========difference image=========\n")
-    print(difference_image)
-    print('\n')
-    print (len(difference_image))
-    print("\n============================\n")
+    #print("\n==========difference image=========\n")
+    #print(difference_image)
+    #print('\n')
+    #print (len(difference_image))#
+    #print("\n============================\n")
 
-    print(g)
+    #print(g)
 
 
     mesh_obj = g.mesh_obj
@@ -147,7 +160,9 @@ while True:
     """ Uncomment the below code if you wish to plot the Jacobian(Gauss-Newton) or Back Projection output.
     Also, please look at the pyEIT documentation on how to optimize and tune the algorithms. 
     A little tuning goes a long way! """
+
     if(method == 'jac' or method == 'bp'):
+        
         fig, ax = plt.subplots(figsize=(6, 4))
         im = ax.tripcolor(x,y, tri, difference_image,
                       shading='flat', cmap=plt.cm.gnuplot)

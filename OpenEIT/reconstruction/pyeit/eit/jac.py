@@ -57,15 +57,15 @@ class JAC(EitBase):
         if normalize:
             dv = self.normalize(v1, v0)
         else:
-            print("v1 is {0} and v0 is {1}\nperform v1 - v0.".format(type(v1), type(v0)))
-            print("v1 = {0}\n\n v0 = {1}.".format(v1, v0))
+            #print("v1 is {0} and v0 is {1}\nperform v1 - v0.".format(type(v1), type(v0)))
+            #print("v1 = {0}\n\n v0 = {1}.".format(v1, v0))
 
             dv = (v1 - v0)
-            print("{0} dv = \n".format(type(dv)))
-            print(dv)
+            #print("{0} dv = \n".format(type(dv)))
+            #print(dv)
         # s = -Hv
-        print("self.H = \n")
-        print(self.H)
+        #print("self.H = \n")
+        #print(self.H)
         ds = -np.dot(self.H, dv)
         return ds
 
@@ -208,11 +208,11 @@ def h_matrix(jac, p, lamb, method='kotre'):
     NDArray
         pseudo-inverse matrix of JAC
     """
-    print("\n=== size: {0}\njac:\n".format(jac.shape))
-    print(jac)
+    #print("\n=== size: {0}\njac:\n".format(jac.shape))
+    #print(jac)
     j_w_j = np.dot(jac.transpose(), jac)
-    print("\n=== size: {0}\njwj:\n".format(j_w_j.shape))
-    print(j_w_j)
+    #print("\n=== size: {0}\njwj:\n".format(j_w_j.shape))
+    #print(j_w_j)
     if method == 'kotre':
         # see adler-dai-lionheart-2007
         # p=0   : noise distribute on the boundary ('dgn')
@@ -229,8 +229,8 @@ def h_matrix(jac, p, lamb, method='kotre'):
 
     # build H
     h_mat = np.dot(la.inv(j_w_j + lamb*r_mat), jac.transpose())
-    print('\n===\nh_mat = \n')
-    print(h_mat)
+    #print('\n===\nh_mat = \n')
+    #print(h_mat)
     return h_mat
 
 

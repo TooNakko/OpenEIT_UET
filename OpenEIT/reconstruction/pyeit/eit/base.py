@@ -79,10 +79,10 @@ class EitBase(object):
         res = fwd.solve_eit(ex_mat, step=step, perm=self.perm, parser=self.parser)
 
         self.J, self.v0, self.B = res.jac, res.v, res.b_matrix
-        print("===Base.py=====\n")
-        print("Length of v0:{0}\n".format(len(self.v0)))
-        print(self.v0)
-        print("\n==========")
+        #print("===Base.py=====\n")
+        #print("Length of v0:{0}\n".format(len(self.v0)))
+        #print(self.v0)
+        #print("\n==========")
         # Jacobian normalization: divide each row of J (J[i]) by abs(v0[i])
         if jac_normalized:
             self.J = self.J / np.abs(self.v0[:, None])

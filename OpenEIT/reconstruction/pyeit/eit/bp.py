@@ -47,11 +47,11 @@ class BP(EitBase):
 
         # choose normalize method, we use sign by default
         if normalize:
-            print("\n====normlize in solve=======\n")
-            print("length of f0:\n={0}".format(len(self.v0)))
-            print("\n{0}".format(self.v0))
-            print("\nlength of f1:\n{0}".format(len(v1)))
-            print("\n{0}".format(v1))
+            #print("\n====normlize in solve=======\n")
+            #print("length of f0:\n={0}".format(len(self.v0)))
+            #print("\n{0}".format(self.v0))
+            #print("\nlength of f1:\n{0}".format(len(v1)))
+            #print("\n{0}".format(v1))
             vn = -(v1 - v0) / np.sign(self.v0)
         else:
             vn = (v1 - v0)

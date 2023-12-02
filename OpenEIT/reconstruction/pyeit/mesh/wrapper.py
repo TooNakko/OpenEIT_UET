@@ -14,7 +14,7 @@ from .shape import unit_circle, unit_ball, area_uniform
 from .shape import fix_points_fd, fix_points_ball
     
 
-def create(n_el=16, fd=None, fh=None, p_fix=None, bbox=None, h0=0.125): #change h0 to change the density of mesh, the lower of h0, the more dense. 
+def create(n_el=16, fd=None, fh=None, p_fix=None, bbox=None, h0=0.15): #change h0 to change the density of mesh, the lower of h0, the more dense. 
     """
     wrapper for pyEIT interface
 
@@ -76,9 +76,9 @@ def create(n_el=16, fd=None, fh=None, p_fix=None, bbox=None, h0=0.125): #change 
             'node': p,
             'perm': perm}
             
-    print("====================\nel_pos = \n")
-    print(el_pos)
-    print("\n====================\n")
+    #print("====================\nel_pos = \n")
+    #print(el_pos)
+    #print("\n====================\n")
 
     return mesh, el_pos
 

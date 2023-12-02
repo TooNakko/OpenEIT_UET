@@ -100,23 +100,23 @@ class JacReconstruction:
             if self.baseline_flag == 1: 
                 self.f0 = data
                 self.baseline_flag = 0 
-                print("{0} self.f0 = \n".format(type(self.f0)))
-                print (self.f0)
+                #print("{0} self.f0 = \n".format(type(self.f0)))
+                #print (self.f0)
             else:
                 # data contains fl.v and f0.v 
                 f1 = np.array(data)
-                print("{0} self.f1 = \n".format(type(f1)))
-                print(f1)
-                print("{0} self.f0 = \n".format(type(self.f0)))
-                print(self.f0)
+                #print("{0} self.f1 = \n".format(type(f1)))
+                #print(f1)
+                #print("{0} self.f0 = \n".format(type(self.f0)))
+                #print(self.f0)
                 # force baselining if there is a length mismatch (not working correctly, fix later). 
                 if len(self.f0) != len(f1): 
-                    print("\nmismatch detected, len f0: {0} != len f1: {1}\n".format(len(self.f0), len(f1)))
+                    #print("\nmismatch detected, len f0: {0} != len f1: {1}\n".format(len(self.f0), len(f1)))
                     self.f0 = data
-                    print("self.f0 modified:\n")
-                    print(self.f0)
-                else: 
-                    print("miss-match not detected, continue\n")
+                    #print("self.f0 modified:\n")
+                    #print(self.f0)
+                #else: 
+                    #print("miss-match not detected, continue\n")
       
                 # if the jacobian is not normalized, data may not to be normalized also.
                 self.ds = self.eit.solve(f1, self.f0, normalize=False)

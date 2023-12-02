@@ -125,9 +125,9 @@ class Forward(object):
 
             jac.append(jac_diff)
             b_matrix.append(b)
-        print("\n=======fem.py solve_eit ========\n")
-        print("len of v: {0}\nv = \n".format(len(v)))
-        print(v)
+        #print("\n=======fem.py solve_eit ========\n")
+        #print("len of v: {0}\nv = \n".format(len(v)))
+        #print(v)
         # update output, now you can call p.jac, p.v, p.b_matrix
         pde_result = namedtuple("pde_result", ['jac', 'v', 'b_matrix'])
         p = pde_result(jac=np.vstack(jac),
