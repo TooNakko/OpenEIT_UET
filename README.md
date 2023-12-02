@@ -131,7 +131,7 @@ Are you using this effort? Is it helpful to you? Would you like to see it mainta
 
 ## UET edited:
 
-# 24/11/2023
+### 24/11/2023
 
 In `offline.py` The size of h_matrix varies depending on the number of electrodes (n_el).
 
@@ -145,8 +145,8 @@ The length of data in each line in `data.txt` should match the column of the `h_
 
 In `offline_2.py`, instead of adding to 2 variable f0 and f1 both data in .txt file, now one variable (which is f0) will take data from the COM port. The another data is the ones in those .txt files.
 
-# 1/12/2023:
+### 1/12/2023:
 
 - Seems apposition mode of `el_dist` only 12 electrodes are processed by voltage meter per time so the value is miss-matched. We change all apposition mode in Back Projection algorithm and GREIT algorithm to adjacent mode.
-- `offline2.py` is modified so now user can input the method (JAC, NP or GREIT)
+- `offline_2.py` is modified so now user can input the method (jac, bp or gr).
 - The density of mesh (variable h0 in `create(n_el=16, fd=None, fh=None, p_fix=None, bbox=None, h0=0.125)`) is modified in `wrapper.py` to speed up the program.
