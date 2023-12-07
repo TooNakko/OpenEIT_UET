@@ -23,7 +23,7 @@ def readfromArduino():
             break
         except UnicodeDecodeError:
             print("UnicodeDecodeError found!")
-            time.sleep(3)
+            #time.sleep(3)
             continue
     return data
 
@@ -49,13 +49,14 @@ reference_image_array  = ''
 difference_image_array = ''
 n_el = 16
 NewFrameSearchFlag = 1
-arduino = serial.Serial('COM9', 250000 ,timeout=5)
+arduino = serial.Serial('COM8', 250000 ,timeout=5)
 
 while True:
     while arduino.inWaiting()==0:
         print("waiting")
-        pass
     time_start_0 = float(time.time() % (24 * 3600))
+     
+    
     
     ## Read reference image f0:
     #for i in range (0, n_el):
@@ -90,8 +91,7 @@ while True:
         difference_image_array += data
         difference_image_array += ' '
         print("string: {0}".format(data))
-
-# This is the baseline image.  
+    # This is the baseline image.  
     text_file = open("UET_data/ref_data.txt", "r")
     lines = text_file.readlines()
     f0 = convert_data_in(lines[0]).tolist()
@@ -113,11 +113,13 @@ while True:
     #print(f1)
 
     """ Select one of the three methods of EIT tomographic reconstruction, Gauss-Newton(Jacobian), GREIT, or Back Projection(BP)"""
-# This is the Gauss Newton Method for tomographic reconstruction. 
+    # This is the Gauss Newton Method for tomographic reconstruction. 
+    
     #print("\njac rescontructing\n")
     #g = OpenEIT.reconstruction.JacReconstruction(n_el=n_el)
     #print("finished reconstructing")
-# Note: Greit method uses a different mesh, so the plot code will be different.
+    
+    # Note: Greit method uses a different mesh, so the plot code will be different.
     if(method == 'jac'):
         g = OpenEIT.reconstruction.JacReconstruction(n_el=n_el)
     elif(method == 'bp'): 
@@ -130,7 +132,7 @@ while True:
 
     g.update_reference(data_baseline)
 
-# set the baseline. 
+    # Set the baseline. 
     baseline = g.eit_reconstruction(f0)
     #print("\n===========baseline==============\n")
     #print (baseline)
@@ -138,7 +140,7 @@ while True:
     #print(len(baseline))
     #print("\n============================\n")
 
-# do the reconstruction. 
+    # do the reconstruction. 
     difference_image = g.eit_reconstruction(f1)
     #print("\n==========difference image=========\n")
     #print(difference_image)

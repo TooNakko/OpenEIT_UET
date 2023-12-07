@@ -17,7 +17,7 @@ import OpenEIT.reconstruction
 def convert_data_in(s):
     data=s
     items=[]
-    for item in data.split(','):
+    for item in data.split(' '):
         item = item.strip()
         if not item:
             continue
@@ -28,7 +28,7 @@ def convert_data_in(s):
             return None
     return np.array(items)
 a = []
-arduino = serial.Serial('COM5', 250000,timeout=5)
+arduino = serial.Serial('COM8', 250000,timeout=5)
 while True:
     #while arduino.inWaiting()==0:
     #    print("waiting")
@@ -41,31 +41,23 @@ while True:
     
     n_el = 16
 
-    if n_el == 8:
-        text_file = open("offline_data/data_8.txt", "r")
-    elif n_el == 16:
-        text_file = open("offline_data/data_16.txt", "r")
-    elif n_el == 32:
-        text_file = open("offline_data/data_32.txt", "r")
-    else:
-        print("Currently only supports 8,16 or 32 electrodes system.")
-        break
-    lines = text_file.readlines()
+    text_file_ref = open("UET_data\\ref_data.txt", "r")
+    ref_lines = text_file_ref.readlines()
+    text_file = open("UET_data\\diff_left_data.txt", "r")
+    diff_lines = text_file.readlines()
 # This is the baseline image.  
 
-    f0          = convert_data_in(lines[0]).tolist()  # input REF
+    f0          = convert_data_in(ref_lines[0]).tolist()  # input REF
     print(f0)
-    print(len(f0))
     #f0          = a[0]
 # this is the new difference image. 
-    f1          = convert_data_in(lines[1]).tolist()   # function bo dau phay
-    print(type(f1))
+    f1          = convert_data_in(diff_lines[0]).tolist()   # function bo dau phay
     print(f1)
 
     """ Select one of the three methods of EIT tomographic reconstruction, Gauss-Newton(Jacobian), GREIT, or Back Projection(BP)"""
 # This is the Gauss Newton Method for tomographic reconstruction. 
     print("jac rescontructing")
-    g = OpenEIT.reconstruction.JacReconstruction(n_el=n_el)
+    g = OpenEIT.reconstruction.BpReconstruction(n_el=n_el)
     print("finished reconstructing")
 # Note: Greit method uses a different mesh, so the plot code will be different.
 # g = OpenEIT.reconstruction.GreitReconstruction(n_el=n_el)
@@ -79,19 +71,14 @@ while True:
 
 # set the baseline. 
     baseline = g.eit_reconstruction(f0)
-    print("\n============================\n")
-    print (baseline)
-    print('\n')
-    print(len(baseline))
-    print("\n============================\n")
 
 # do the reconstruction. 
     difference_image = g.eit_reconstruction(f1)
-    print("\n============================\n")
-    print(difference_image)
-    print('\n')
-    print (len(difference_image))
-    print("\n============================\n")
+    #print("\n============================\n")
+    #print(difference_image)
+    #print('\n')
+    #print (len(difference_image))
+    #print("\n============================\n")
 
 # #print(g.__dict__)
 

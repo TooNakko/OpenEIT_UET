@@ -43,7 +43,7 @@ class BpReconstruction:
         # we create this according to an opposition protocol to maximize contrast. 
         self.ex_mat = eit_scan_lines(ne = self.n_el, dist = self.el_dist)
         """ 0. construct mesh """
-        # h0 is initial mesh size. , h0=0.1
+        # h0 is initial mesh size
         self.mesh_obj, self.el_pos = mesh.create(self.n_el)
         """ 3. Set Up BP """
         self.eit =  bp(self.mesh_obj,self.el_pos, ex_mat=self.ex_mat, step=self.step, parser='std')
