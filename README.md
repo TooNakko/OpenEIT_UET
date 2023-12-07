@@ -150,3 +150,8 @@ In `offline_2.py`, instead of adding to 2 variable f0 and f1 both data in .txt f
 - Seems apposition mode of `el_dist` only 12 electrodes are processed by voltage meter per time so the value is miss-matched. We change all apposition mode in Back Projection algorithm and GREIT algorithm to adjacent mode.
 - `offline_2.py` is modified so now user can input the method (jac, bp or gr).
 - The density of mesh (variable h0 in `create(n_el=16, fd=None, fh=None, p_fix=None, bbox=None, h0=0.125)`) is modified in `wrapper.py` to speed up the program.
+
+### 7/12/2023
+
+- Tuning lamda or p in line 83 in `penEIT\reconstruction\jac.py` results in different quality of the image.
+- Now update `offline_dynamic` that shows image in real-time, still has many flaws.

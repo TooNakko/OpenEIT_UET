@@ -28,7 +28,7 @@ def convert_data_in(s):
             return None
     return np.array(items)
 a = []
-arduino = serial.Serial('COM8', 250000,timeout=5)
+#arduino = serial.Serial('COM9', 250000,timeout=5)
 while True:
     #while arduino.inWaiting()==0:
     #    print("waiting")
