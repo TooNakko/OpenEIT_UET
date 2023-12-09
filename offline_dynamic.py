@@ -17,9 +17,12 @@ import random
 from datetime import datetime
 from matplotlib.animation import FuncAnimation
 
+count = 0
+
+
 n_el = 16
-method = "bp"
-arduino = serial.Serial('COM8', 250000 ,timeout=5)
+method = "jac"
+arduino = serial.Serial('COM4', 250000 ,timeout=5)
 fig, ax = plt.subplots(figsize=(6, 4))
 
 def readfromArduino():
@@ -43,8 +46,10 @@ def convert_data_in(s):
         try:
             items.append(float(item))
         except ValueError:
-            print("\nValue error: {0} {1}, none returned!".format(items, type(items)))
-            return None
+            print("Value Error found! Handling...")
+            #print("\nValue error: {0} {1}, none returned!".format(items, type(items)))
+            items.append(float(0))
+            #return None
     return np.array(items)
 
 
@@ -78,40 +83,48 @@ def plot_grEIT(difference_image, n_el):
     fig.set_size_inches(6, 4)
 
 
-def get_difference_img_array(n_el, difference_image_array = '', NewFrameSearchFlag = 1):
+def get_difference_img_array(n_el, difference_image_array = '', NewFrameSearchFlag = 1, idx = 0):
     while arduino.inWaiting()==0:
         #print("waiting")
         pass
     # Read difference image f1:
-    for i in range (0, n_el): 
+    #for i in range (0, n_el): 
+    while idx < n_el:
         data = readfromArduino()
         #skip until the empty line is found to catch the whole frame
         while(NewFrameSearchFlag == 1):
             if len(data) > 4:
-                print("Seeking for new frame")
+                print("Searching for new frame.")
                 data = readfromArduino()
                 continue
             else:
-                print("New frame found!")
+                print("New frame found.")
                 data = readfromArduino()
-
                 NewFrameSearchFlag = 0
                 break
-        # Check if receiving enough data to avoid miss-matching
-        #if len(data) < 68:
         data = readfromArduino()
+        if len(data) < 40:              # Restart the process if bug line found
+            print("=== Fault frame, restart the process! ===")   
+            idx = 0
+            difference_image_array = ''
+            NewFrameSearchFlag = 1
+            time.sleep(0.5)
+            continue
+
         data=data.strip('\r\n')
         difference_image_array += data
         difference_image_array += ' '
+        idx = idx + 1
         print("String: {0}".format(data))
+
     return difference_image_array
 
 
 def animating(i):
-        ax.clear()      
+        ax.clear()
+
         # Read difference image f1:
-        difference_image_array = get_difference_img_array(n_el, difference_image_array = '', NewFrameSearchFlag = 1)
-        print("\n")
+        difference_image_array = get_difference_img_array(n_el, difference_image_array = '', NewFrameSearchFlag = 1, idx = 0)
         # Read the baseline image.  
         text_file = open("UET_data/ref_data.txt", "r")
         lines = text_file.readlines()
@@ -216,7 +229,7 @@ def animating(i):
 
 
 
-ani = FuncAnimation(fig, animating, interval = 200)
+ani = FuncAnimation(fig, animating, interval = 300)
 #animating()
 #time_end_0 = float(time.time() % (24 * 3600))
 #run_time_total = time_end_0 - time_start_0
