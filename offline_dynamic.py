@@ -21,8 +21,8 @@ count = 0
 
 
 n_el = 16
-method = "jac"
-arduino = serial.Serial('COM4', 250000 ,timeout=5)
+method = "bp"
+arduino = serial.Serial('COM5', 115200 ,timeout=4)
 fig, ax = plt.subplots(figsize=(6, 4))
 
 def readfromArduino():
@@ -88,7 +88,6 @@ def get_difference_img_array(n_el, difference_image_array = '', NewFrameSearchFl
         #print("waiting")
         pass
     # Read difference image f1:
-    #for i in range (0, n_el): 
     while idx < n_el:
         data = readfromArduino()
         #skip until the empty line is found to catch the whole frame
@@ -122,7 +121,6 @@ def get_difference_img_array(n_el, difference_image_array = '', NewFrameSearchFl
 
 def animating(i):
         ax.clear()
-
         # Read difference image f1:
         difference_image_array = get_difference_img_array(n_el, difference_image_array = '', NewFrameSearchFlag = 1, idx = 0)
         # Read the baseline image.  
@@ -132,7 +130,6 @@ def animating(i):
         #f0          = convert_data_in(lines[0]).tolist()  # input REF
         #f0          = convert_data_in(reference_image_array).tolist()
         #f1          = convert_data_in(lines[1]).tolist()
-
 
         #text_file_2 = open("UET_data/diff_left_data.txt", "r")
         #lines_2 = text_file_2.readlines()
@@ -179,9 +176,7 @@ def animating(i):
         #print('\n')
         #print (len(difference_image))#
         #print("\n============================\n")
-
         #print(g)
-
 
         #mesh_obj = g.mesh_obj
         el_pos = g.el_pos
@@ -229,7 +224,7 @@ def animating(i):
 
 
 
-ani = FuncAnimation(fig, animating, interval = 300)
+ani = FuncAnimation(fig, animating, interval = 10)
 #animating()
 #time_end_0 = float(time.time() % (24 * 3600))
 #run_time_total = time_end_0 - time_start_0

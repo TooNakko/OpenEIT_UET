@@ -49,7 +49,7 @@ reference_image_array  = ''
 difference_image_array = ''
 n_el = 16
 NewFrameSearchFlag = 1
-arduino = serial.Serial('COM8', 250000 ,timeout=5)
+arduino = serial.Serial('COM5', 115200 ,timeout=5)
 
 while True:
     while arduino.inWaiting()==0:
