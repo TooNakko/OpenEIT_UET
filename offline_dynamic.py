@@ -22,7 +22,7 @@ count = 0
 
 n_el = 16
 method = "bp"
-arduino = serial.Serial('COM5', 115200 ,timeout=4)
+arduino = serial.Serial('COM4', 115200 ,timeout=4)
 fig, ax = plt.subplots(figsize=(6, 4))
 
 def readfromArduino():
@@ -93,33 +93,34 @@ def get_difference_img_array(n_el, difference_image_array = '', NewFrameSearchFl
         #skip until the empty line is found to catch the whole frame
         while(NewFrameSearchFlag == 1):
             if len(data) > 4:
-                print("Searching for new frame.")
+        #        print("Searching for new frame.")
                 data = readfromArduino()
                 continue
             else:
-                print("New frame found.")
+        #        print("New frame found.")
                 data = readfromArduino()
                 NewFrameSearchFlag = 0
                 break
         data = readfromArduino()
-        if len(data) < 40:              # Restart the process if bug line found
-            print("=== Fault frame, restart the process! ===")   
-            idx = 0
-            difference_image_array = ''
-            NewFrameSearchFlag = 1
-            time.sleep(0.5)
-            continue
+        #if len(data) < 40:              # Restart the process if bug line found
+        #    print("=== Fault frame, restart the process! ===")   
+        #    idx = 0
+        #    difference_image_array = ''
+        #    NewFrameSearchFlag = 1
+        #    time.sleep(0.5)
+        #    continue
 
         data=data.strip('\r\n')
         difference_image_array += data
         difference_image_array += ' '
         idx = idx + 1
-        print("String: {0}".format(data))
+        #print("String: {0}".format(data))
 
     return difference_image_array
 
 
 def animating(i):
+        time_start_0 = float(time.time() % (24 * 3600))
         ax.clear()
         # Read difference image f1:
         difference_image_array = get_difference_img_array(n_el, difference_image_array = '', NewFrameSearchFlag = 1, idx = 0)
@@ -221,10 +222,12 @@ def animating(i):
             ax.axis('equal')
             ax.set_title(r'$\Delta$ Conductivity Map of Lungs')
             fig.set_size_inches(6, 4)
+        time_end_0 = float(time.time() % (24 * 3600))
+        run_time_total = time_end_0 - time_start_0
+        print('Run time: {}'.format(run_time_total))
 
 
-
-ani = FuncAnimation(fig, animating, interval = 10)
+ani = FuncAnimation(fig, animating, interval = 98)
 #animating()
 #time_end_0 = float(time.time() % (24 * 3600))
 #run_time_total = time_end_0 - time_start_0

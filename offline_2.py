@@ -49,12 +49,11 @@ reference_image_array  = ''
 difference_image_array = ''
 n_el = 16
 NewFrameSearchFlag = 1
-arduino = serial.Serial('COM5', 115200 ,timeout=5)
+arduino = serial.Serial('COM4', 115200 ,timeout=5)
 
 while True:
     while arduino.inWaiting()==0:
         print("waiting")
-    time_start_0 = float(time.time() % (24 * 3600))
      
     
     
@@ -84,6 +83,8 @@ while True:
 
                 NewFrameSearchFlag = 0
                 break
+        time_start_0 = float(time.time() % (24 * 3600))
+        
         # Check if receiving enough data to avoid miss-matching
         if len(data) < 68:
             data = readfromArduino()

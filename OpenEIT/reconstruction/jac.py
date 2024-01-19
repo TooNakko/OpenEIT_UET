@@ -80,7 +80,7 @@ class JacReconstruction:
         self.eit = jacobian(self.mesh_obj, self.el_pos, ex_mat=self.ex_mat, step=self.step,perm=0.5)
 
         # parameter tuning is nee/ded for better EIT images
-        self.eit.setup(p=0.75, lamb=0.8, method='kotre') #Original: p = 0.6 and lamb = 0.8, method = "kotre"
+        self.eit.setup(p=0.6, lamb=0.8, method='kotre') #Original: p = 0.6 and lamb = 0.8, method = "kotre"
         logger.info("JAC mesh set up ")
         self.ds  = None
         self.pts = self.mesh_obj['node']
