@@ -135,9 +135,9 @@ Are you using this effort? Is it helpful to you? Would you like to see it mainta
 
 In `offline.py` The size of h_matrix varies depending on the number of electrodes (n_el).
 
-- For ` n_el = 8`, `h_matrix.shape = (7851, 40)`
-- For ` n_el = 16`, `h_matrix.shape = (7847, 208)`
-- For ` n_el = 32`, `h_matrix.shape = (7854, 928)`
+- For ` n_el = 8`, `h_matrix.shape = (, 40)`
+- For ` n_el = 16`, `h_matrix.shape = (, 208)`
+- For ` n_el = 32`, `h_matrix.shape = (, 928)`
 
 `Data.txt` in general is a file containing numbers separating by a space, each line has the same numbers of variable.
 
