@@ -49,13 +49,12 @@ reference_image_array  = ''
 difference_image_array = ''
 n_el = 16
 NewFrameSearchFlag = 1
-arduino = serial.Serial('COM4', 115200 ,timeout=5)
+arduino = serial.Serial('COM6', 115200 ,timeout=5)
 
 while True:
     while arduino.inWaiting()==0:
         print("waiting")
      
-    
     
     ## Read reference image f0:
     #for i in range (0, n_el):
@@ -83,7 +82,6 @@ while True:
 
                 NewFrameSearchFlag = 0
                 break
-        time_start_0 = float(time.time() % (24 * 3600))
         
         # Check if receiving enough data to avoid miss-matching
         if len(data) < 68:
@@ -93,7 +91,8 @@ while True:
         difference_image_array += ' '
         print("string: {0}".format(data))
     # This is the baseline image.  
-    text_file = open("UET_data/ref_data.txt", "r")
+    time_start_0 = float(time.time() % (24 * 3600))
+    text_file = open("UET_data/27_2/ref_data.txt", "r")
     lines = text_file.readlines()
     f0 = convert_data_in(lines[0]).tolist()
     #f0          = convert_data_in(lines[0]).tolist()  # input REF
@@ -104,6 +103,9 @@ while True:
     #text_file_2 = open("UET_data/diff_left_data.txt", "r")
     #lines_2 = text_file_2.readlines()
     f1          = convert_data_in(difference_image_array).tolist() 
+    time_end_0 = float(time.time() % (24 * 3600))
+    run_time_total = time_end_0 - time_start_0
+    print("time 0:", run_time_total)
     #f1          = convert_data_in(lines_2[0]).tolist() 
     
     #print("\nf0:\n")
@@ -121,18 +123,28 @@ while True:
     #print("finished reconstructing")
     
     # Note: Greit method uses a different mesh, so the plot code will be different.
+    time_start_1 = float(time.time() % (24 * 3600))
     if(method == 'jac'):
         g = OpenEIT.reconstruction.JacReconstruction(n_el=n_el)
     elif(method == 'bp'): 
         g = OpenEIT.reconstruction.BpReconstruction(n_el=n_el)
     elif(method == 'gr'):
         g = OpenEIT.reconstruction.GreitReconstruction(n_el=n_el)
-        
+    time_end_1 = float(time.time() % (24 * 3600))
+    run_time_total = time_end_1 - time_start_1
+    print("time 1:", run_time_total)   
+
     data_baseline = f0
     print ('f0',len(f0),len(f1))
 
-    g.update_reference(data_baseline)
 
+
+    time_start_2 = float(time.time() % (24 * 3600))
+
+    g.update_reference(data_baseline)
+    time_end_2 = float(time.time() % (24 * 3600))
+    run_time_total = time_end_2 - time_start_2
+    print("time 2:", run_time_total) 
     # Set the baseline. 
     baseline = g.eit_reconstruction(f0)
     #print("\n===========baseline==============\n")
@@ -140,6 +152,7 @@ while True:
     #print('\n')
     #print(len(baseline))
     #print("\n============================\n")
+    time_start_3 = float(time.time() % (24 * 3600))
 
     # do the reconstruction. 
     difference_image = g.eit_reconstruction(f1)
@@ -148,7 +161,9 @@ while True:
     #print('\n')
     #print (len(difference_image))#
     #print("\n============================\n")
-
+    time_end_3 = float(time.time() % (24 * 3600))
+    run_time_total = time_end_3 - time_start_3
+    print("time 3:", run_time_total)
     #print(g)
 
 
@@ -163,7 +178,7 @@ while True:
     """ Uncomment the below code if you wish to plot the Jacobian(Gauss-Newton) or Back Projection output.
     Also, please look at the pyEIT documentation on how to optimize and tune the algorithms. 
     A little tuning goes a long way! """
-
+    time_start_4 = float(time.time() % (24 * 3600))
     if(method == 'jac' or method == 'bp'):
         
         fig, ax = plt.subplots(figsize=(6, 4))
@@ -196,10 +211,10 @@ while True:
         ax.set_title(r'$\Delta$ Conductivity Map of Lungs')
         fig.set_size_inches(6, 4)
         # fig.savefig('../figs/demo_greit.png', dpi=96)
- 
+    time_end_4 = float(time.time() % (24 * 3600))
+    run_time_total = time_end_4 - time_start_4
+    print("time 4:", run_time_total)
     break
 
-time_end_0 = float(time.time() % (24 * 3600))
-run_time_total = time_end_0 - time_start_0
-print("\n\nTOTAL RUN TIME FOR {0}: {1}".format(method, run_time_total))
+
 plt.show()

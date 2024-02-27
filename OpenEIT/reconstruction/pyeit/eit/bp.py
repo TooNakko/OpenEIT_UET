@@ -52,12 +52,12 @@ class BP(EitBase):
             #print("\n{0}".format(self.v0))
             #print("\nlength of f1:\n{0}".format(len(v1)))
             #print("\n{0}".format(v1))
-            try:
+            #try:
                 vn = -(v1 - v0) / np.sign(self.v0)
-            except ValueError:
-                print("Value Error found!")
-                max_row = max(v1.shape[0], v0.shape[0])
-                vn = np.zeros(max_row)
+            #except ValueError:
+            #    print("Value Error found!")
+            #    max_row = max(v1.shape[0], v0.shape[0])                #handling value error
+            #    vn = np.zeros(max_row)
         else:
             vn = (v1 - v0)
         # print (' v and H shapes ')

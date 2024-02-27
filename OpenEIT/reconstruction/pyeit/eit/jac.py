@@ -16,7 +16,7 @@ from .base import EitBase
 class JAC(EitBase):
     """ implementing a JAC class """
 
-    def setup(self, p=0.20, lamb=0.001, method='kotre'):
+    def setup(self, p=0.5, lamb=0.8, method='kotre'):
         """
         JAC, default file parser is 'std'
 
@@ -38,6 +38,8 @@ class JAC(EitBase):
         self.H = h_matrix(self.J, p, lamb, method)
 
     def solve(self, v1, v0, normalize=False):
+        print('v0 =\n ',v0)
+        print('v1 =\n ',v1)
         """ dynamic solve_eit
 
         Parameters
@@ -59,14 +61,15 @@ class JAC(EitBase):
         else:
             #print("v1 is {0} and v0 is {1}\nperform v1 - v0.".format(type(v1), type(v0)))
             #print("v1 = {0}\n\n v0 = {1}.".format(v1, v0))
-
+    
             dv = (v1 - v0)
             #print("{0} dv = \n".format(type(dv)))
             #print(dv)
         # s = -Hv
         #print("self.H = \n")
         #print(self.H)
-        ds = -np.dot(self.H, dv)
+        ds = -np.dot(self.H, dv.transpose())
+        print('ds with transposed dv=\n',ds)
         return ds
 
     def map(self, v):
@@ -146,6 +149,7 @@ class JAC(EitBase):
             # forward solver
             fs = self.fwd.solve_eit(self.ex_mat, step=self.step,
                                     perm=x0, parser=self.parser)
+            print("FORWARD SOLVED")
             # Residual
             r0 = v - fs.v
             jac = fs.jac

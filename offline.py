@@ -13,6 +13,8 @@ import matplotlib.pyplot as plt
 from chart_studio import plotly
 import OpenEIT.reconstruction 
 
+import time
+
 
 def convert_data_in(s):
     data=s
@@ -46,7 +48,8 @@ while True:
     text_file = open("UET_data\\diff_left_data.txt", "r")
     diff_lines = text_file.readlines()
 # This is the baseline image.  
-
+    time_start_0 = float(time.time() % (24 * 3600))
+    
     f0          = convert_data_in(ref_lines[0]).tolist()  # input REF
     print(f0)
     #f0          = a[0]
@@ -80,7 +83,6 @@ while True:
     #print (len(difference_image))
     #print("\n============================\n")
 
-# #print(g.__dict__)
 
 
     mesh_obj = g.mesh_obj
@@ -104,6 +106,9 @@ while True:
     ax.axis('equal')
     fig.colorbar(im)
     break
+time_end_0 = float(time.time() % (24 * 3600))
+run_time_total = time_end_0 - time_start_0
+print("time 0:", run_time_total)
 plt.show()
 
 """ Uncomment the below code if you wish to plot the GREIT output. Also, please look at the pyEIT documentation on how to optimize and tune the algorithms. A little tuning goes a long way! """

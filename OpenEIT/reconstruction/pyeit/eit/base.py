@@ -77,7 +77,7 @@ class EitBase(object):
 
         # solving Jacobian using uniform sigma distribution
         res = fwd.solve_eit(ex_mat, step=step, perm=self.perm, parser=self.parser)
-
+        print('|||||||||||||||||||||')
         self.J, self.v0, self.B = res.jac, res.v, res.b_matrix
         #print("===Base.py=====\n")
         #print("Length of v0:{0}\n".format(len(self.v0)))

@@ -21,8 +21,8 @@ count = 0
 
 
 n_el = 16
-method = "bp"
-arduino = serial.Serial('COM4', 115200 ,timeout=4)
+method = "jac"
+arduino = serial.Serial('COM8', 115200 ,timeout=4)
 fig, ax = plt.subplots(figsize=(6, 4))
 
 def readfromArduino():
@@ -101,7 +101,6 @@ def get_difference_img_array(n_el, difference_image_array = '', NewFrameSearchFl
                 data = readfromArduino()
                 NewFrameSearchFlag = 0
                 break
-        data = readfromArduino()
         #if len(data) < 40:              # Restart the process if bug line found
         #    print("=== Fault frame, restart the process! ===")   
         #    idx = 0
@@ -120,6 +119,7 @@ def get_difference_img_array(n_el, difference_image_array = '', NewFrameSearchFl
 
 
 def animating(i):
+        global pass_flag
         time_start_0 = float(time.time() % (24 * 3600))
         ax.clear()
         # Read difference image f1:
@@ -163,15 +163,24 @@ def animating(i):
         g.update_reference(data_baseline)
 
         # set the baseline. 
-        baseline = g.eit_reconstruction(f0)
+        try:
+            baseline = g.eit_reconstruction(f0)
+        except Exception as e:
+            ani.event_source.stop()  # Stop the current animation
+            ani.event_source.start()  # Start a new animation
         #print("\n===========baseline==============\n")
         #print (baseline)
         #print('\n')
         #print(len(baseline))
         #print("\n============================\n")
 
-        # do the reconstruction. 
-        difference_image = g.eit_reconstruction(f1)
+        # do the reconstruction.
+        try:
+            difference_image = g.eit_reconstruction(f1)
+        except Exception as e:
+            ani.event_source.stop()  # Stop the current animation
+            ani.event_source.start()  # Start a new animation
+        
         #print("\n==========difference image=========\n")
         #print(difference_image)
         #print('\n')
@@ -190,7 +199,7 @@ def animating(i):
         """ Uncomment the below code if you wish to plot the Jacobian(Gauss-Newton) or Back Projection output.
         Also, please look at the pyEIT documentation on how to optimize and tune the algorithms. 
         A little tuning goes a long way! """
-
+        ax.clear()
         if(method == 'jac' or method == 'bp'):
             #fig, ax = plt.subplots(figsize=(6, 4))
             im = ax.tripcolor(x,y, tri, difference_image,
@@ -227,7 +236,7 @@ def animating(i):
         print('Run time: {}'.format(run_time_total))
 
 
-ani = FuncAnimation(fig, animating, interval = 98)
+ani = FuncAnimation(fig, animating, interval = 298, cache_frame_data= False)
 #animating()
 #time_end_0 = float(time.time() % (24 * 3600))
 #run_time_total = time_end_0 - time_start_0

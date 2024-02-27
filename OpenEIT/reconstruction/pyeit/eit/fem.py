@@ -114,6 +114,7 @@ class Forward(object):
            
             #print(v_diff)  matrix 16x13
             #print(jac_diff) matrix 16x13
+            
             # build bp projection matrix
             # 1. we can either smear at the center of elements, using
             #    >> fe = np.mean(f[self.tri], axis=1)
